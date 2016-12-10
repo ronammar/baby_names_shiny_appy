@@ -24,9 +24,9 @@ ui <- fluidPage(
       sidebarPanel(
          sliderInput("year",
                      "Birth year",
-                     min=1880,
-                     max=2015,
-                     value=1988,
+                     min=min(babyNames$year),
+                     max=max(babyNames$year),
+                     value=1988,  # a great year!
                      sep='',
                      animate=TRUE)
       ),
@@ -34,6 +34,18 @@ ui <- fluidPage(
       mainPanel(
          plotOutput("hist")
       )
+   ),
+   
+   sidebarLayout(
+     sidebarPanel(
+       textInput("name",
+                 "Lookup name",
+                 value="Ron")
+     ),
+     
+     mainPanel(
+       plotOutput("density")
+     )
    )
 )
 
@@ -43,6 +55,7 @@ server <- function(input, output) {
    output$hist <- renderPlot({
      # Plot a histogram of name counts for the top 20 names for a given year
      d <- babyNames %>%
+       mutate(name=str_to_title(name)) %>%
        filter(year == input$year) %>%
        group_by(sex) %>%
        arrange(desc(count)) %>%
@@ -57,6 +70,10 @@ server <- function(input, output) {
        labs(x="Baby name", y="Number of babies", fill="Sex") +
        theme_bw(17) +
        theme(axis.text.x = element_text(angle=60, hjust=1))
+   })
+   
+   output$density <- renderPlot({
+     ggplot(mtcars, aes(x=mpg)) + geom_density()
    })
 }
 

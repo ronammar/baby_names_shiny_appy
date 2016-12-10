@@ -20,6 +20,8 @@ options(stringsAsFactors=FALSE)
 
 #-------------------------------------------------------------------------------
 
+library(stringr)
+
 babyNames <- data.frame()
 
 for (y in 1880:2015) {
@@ -29,5 +31,7 @@ for (y in 1880:2015) {
 }
 
 colnames(babyNames) <- c("name", "sex", "count", "year")
+
+babyNames$name <- str_to_lower(babyNames$name)
 
 saveRDS(babyNames, "data/baby_names.rds")
