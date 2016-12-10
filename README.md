@@ -1,6 +1,6 @@
 # Baby names Shiny app
 
-A Shiny app for stats about baby names from the [US Social Security Administration](http://michaeltoth.me/popularity-of-baby-names-since-1880.html).
+A Shiny app for stats about baby names from the [US Social Security Administration](https://www.ssa.gov/oact/babynames/limits.html).
 
 This is an effort to reproduce and modify the [blog post by Michael Toth](http://michaeltoth.me/popularity-of-baby-names-since-1880.html) ([code](https://github.com/michaeltoth/shiny-projects/tree/master/census_names)).
 
