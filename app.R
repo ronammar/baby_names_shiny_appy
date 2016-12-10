@@ -18,7 +18,9 @@ library(tidyr)
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
-   titlePanel("Popularity of baby names in the USA since 1880 (data from SSA)"),
+   h1("Popularity of baby names in the USA since 1880 (data from ",
+              a("SSA", href="https://www.ssa.gov/oact/babynames/limits.html", target="_blank"),
+              ")"),
    
    h3("Search for popularity of specific names"),
    
@@ -58,7 +60,19 @@ ui <- fluidPage(
       mainPanel(
         plotOutput("histLeast"),
         width=11
-     )
+     ),
+     
+     hr(),
+     
+     p("Special thanks to ",
+       strong("Michael Toth"),
+       " for inspiring this with his ",
+       a("blog post", href="http://michaeltoth.me/popularity-of-baby-names-since-1880.html", target="_blank")
+       ),
+     
+     p("Find my code on ",
+       a("Github", href="https://github.com/ronammar/baby_names_shiny_appy", target="_blank")
+       )
    )
 )
 
@@ -121,4 +135,3 @@ server <- function(input, output) {
 
 # Run the application 
 shinyApp(ui=ui, server=server)
-
