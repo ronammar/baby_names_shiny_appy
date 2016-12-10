@@ -1,5 +1,5 @@
 # Author: Ron Ammar
-# Contact: ron.ammar@bms.com
+# Contact: ron.ammar@gmail.com
 # Description: Merge baby name files from SSA, national list.
 #   (https://www.ssa.gov/oact/babynames/limits.html)
 
@@ -21,3 +21,11 @@ options(stringsAsFactors=FALSE)
 #-------------------------------------------------------------------------------
 
 babyNames <- data.frame()
+
+for (y in 1880:2015) {
+  yearNames <- read.csv(file=paste0("data/ssa_national_names/yob", y, ".txt"), header=FALSE)
+  yearNames$year <- rep(y, nrow(yearNames))
+  babyNames <- rbind(babyNames, yearNames)
+}
+
+colnames(babyNames) <- c("name", "sex", "count", "year")
