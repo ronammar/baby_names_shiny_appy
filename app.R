@@ -7,31 +7,32 @@
 # Do not convert character vectors to factors unless explicitly indicated
 options(stringsAsFactors=FALSE)
 
+babyNames <- readRDS("data/baby_names.rds")
 
-############# Standard shiny template below (from RStudio) ---------------------
-
-
+library(dplyr)
+library(ggplot2)
 library(shiny)
+library(stringr)
+library(tidyr)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
    
-   # Application title
-   titlePanel("Old Faithful Geyser Data"),
+   titlePanel("Popularity of baby names in the USA since 1880 (data from SSA)"),
    
-   # Sidebar with a slider input for number of bins 
    sidebarLayout(
       sidebarPanel(
-         sliderInput("bins",
-                     "Number of bins:",
-                     min = 1,
-                     max = 50,
-                     value = 30)
+         sliderInput("year",
+                     "Birth year",
+                     min=1880,
+                     max=2015,
+                     value=1988,
+                     sep='',
+                     animate=TRUE)
       ),
       
-      # Show a plot of the generated distribution
       mainPanel(
-         plotOutput("distPlot")
+         plotOutput("hist")
       )
    )
 )
@@ -39,16 +40,26 @@ ui <- fluidPage(
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      x    <- faithful[, 2] 
-      bins <- seq(min(x), max(x), length.out = input$bins + 1)
-      
-      # draw the histogram with the specified number of bins
-      hist(x, breaks = bins, col = 'darkgray', border = 'white')
+   output$hist <- renderPlot({
+     # Plot a histogram of name counts for the top 20 names for a given year
+     d <- babyNames %>%
+       filter(year == input$year) %>%
+       group_by(sex) %>%
+       arrange(desc(count)) %>%
+       top_n(20, count)
+     
+     # Below we use custom factor levels to preserve ordering when plotted
+     d$name <- factor(d$name, levels=d$name)
+     
+     ggplot(d, aes(x=name, y=count, fill=sex)) +
+       facet_wrap(~ sex, scale="free") +
+       geom_bar(stat="identity") +
+       labs(x="Baby name", y="Number of babies") +
+       theme_bw() +
+       theme(axis.text.x = element_text(angle=90))
    })
 }
 
 # Run the application 
-shinyApp(ui = ui, server = server)
+shinyApp(ui=ui, server=server)
 

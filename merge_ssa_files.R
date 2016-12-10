@@ -29,3 +29,5 @@ for (y in 1880:2015) {
 }
 
 colnames(babyNames) <- c("name", "sex", "count", "year")
+
+saveRDS(babyNames, "data/baby_names.rds")
