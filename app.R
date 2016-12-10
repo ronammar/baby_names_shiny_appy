@@ -20,6 +20,22 @@ ui <- fluidPage(
    
    titlePanel("Popularity of baby names in the USA since 1880 (data from SSA)"),
    
+   h3("Search for popularity of specific names"),
+   
+   verticalLayout(
+     sidebarPanel(
+       textInput("names",
+                 "Lookup names (comma separated):",
+                 value="Ron, Daniel, Helen, Michal")
+     ),
+     
+     mainPanel(
+       plotOutput("density")
+     )
+   ),
+   
+   h3("Most popular names by year"),
+   
    verticalLayout(
       sidebarPanel(
          sliderInput("year",
@@ -34,18 +50,6 @@ ui <- fluidPage(
       mainPanel(
          plotOutput("hist")
       )
-   ),
-   
-   verticalLayout(
-     sidebarPanel(
-       textInput("names",
-                 "Lookup names (comma separated):",
-                 value="Ron, Daniel, Helen, Michal")
-     ),
-     
-     mainPanel(
-       plotOutput("density")
-     )
    )
 )
 
@@ -80,7 +84,7 @@ server <- function(input, output) {
      d <- filter(babyNames, name %in% specificNames)
      
      ggplot(d, aes(x=year, y=count, color=name)) +
-       facet_wrap(~ sex) +
+       facet_wrap(~ sex, scales="free") +
        geom_line(size=1) + 
        theme_bw(17)
        
