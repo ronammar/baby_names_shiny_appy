@@ -20,7 +20,7 @@ ui <- fluidPage(
    
    titlePanel("Popularity of baby names in the USA since 1880 (data from SSA)"),
    
-   sidebarLayout(
+   verticalLayout(
       sidebarPanel(
          sliderInput("year",
                      "Birth year",
@@ -54,9 +54,9 @@ server <- function(input, output) {
      ggplot(d, aes(x=name, y=count, fill=sex)) +
        facet_wrap(~ sex, scale="free") +
        geom_bar(stat="identity") +
-       labs(x="Baby name", y="Number of babies") +
-       theme_bw() +
-       theme(axis.text.x = element_text(angle=90))
+       labs(x="Baby name", y="Number of babies", fill="Sex") +
+       theme_bw(17) +
+       theme(axis.text.x = element_text(angle=60, hjust=1))
    })
 }
 
