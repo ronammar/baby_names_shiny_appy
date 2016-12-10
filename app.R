@@ -36,10 +36,10 @@ ui <- fluidPage(
       )
    ),
    
-   sidebarLayout(
+   verticalLayout(
      sidebarPanel(
        textInput("names",
-                 "Lookup name",
+                 "Lookup names (comma separated):",
                  value="Ron, Daniel, Helen, Michal")
      ),
      
@@ -81,8 +81,8 @@ server <- function(input, output) {
      
      ggplot(d, aes(x=year, y=count, color=name)) +
        facet_wrap(~ sex) +
-       geom_line() + 
-       theme_bw()
+       geom_line(size=1) + 
+       theme_bw(17)
        
    })
 }
