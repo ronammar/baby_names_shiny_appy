@@ -30,12 +30,11 @@ ui <- fluidPage(
      ),
      
      mainPanel(
-       plotOutput("density")
+       plotOutput("density"),
+       width=11
      )
    ),
-   
-   h3("Most popular names by year"),
-   
+  
    verticalLayout(
       sidebarPanel(
          sliderInput("year",
@@ -47,33 +46,62 @@ ui <- fluidPage(
                      animate=TRUE)
       ),
       
+      h3("Most popular names by year"),
+      
       mainPanel(
-         plotOutput("hist")
-      )
+         plotOutput("hist"),
+         width=11
+      ),
+      
+      h3("A sampling of least popular names by year (min count = 5 babies)"),
+      
+      mainPanel(
+        plotOutput("histLeast"),
+        width=11
+     )
    )
 )
+
+# Histogram plotter
+makeHistogram <- function(inputYear, topNum=35, topNames=TRUE) {
+  # Plot a histogram of name counts for the top names for a given year
+  d <- babyNames %>%
+    mutate(name=str_to_title(name)) %>%
+    filter(year == inputYear) %>%
+    group_by(sex)
+  
+  if (topNames) {
+    d <- d %>% 
+      arrange(desc(count)) %>%
+      top_n(topNum, count)
+  } else {  # bottom
+    d <- d %>% 
+      arrange(count) %>%
+      top_n(-topNum, count) %>%
+      # there are more than 20 with ties for lowest count, sample 20 random
+      sample_n(topNum)
+  }
+ 
+  # Below we use custom factor levels to preserve ordering when plotted
+  d$name <- factor(d$name, levels=d$name)
+   
+  ggplot(d, aes(x=name, y=count, fill=sex)) +
+    facet_wrap(~ sex, scale="free") +
+    geom_bar(stat="identity") +
+    labs(x="Baby name", y="Number of babies", fill="Sex") +
+    theme_bw(17) +
+    theme(axis.text.x = element_text(angle=60, hjust=1))
+}
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
    output$hist <- renderPlot({
-     # Plot a histogram of name counts for the top 20 names for a given year
-     d <- babyNames %>%
-       mutate(name=str_to_title(name)) %>%
-       filter(year == input$year) %>%
-       group_by(sex) %>%
-       arrange(desc(count)) %>%
-       top_n(20, count)
-     
-     # Below we use custom factor levels to preserve ordering when plotted
-     d$name <- factor(d$name, levels=d$name)
-     
-     ggplot(d, aes(x=name, y=count, fill=sex)) +
-       facet_wrap(~ sex, scale="free") +
-       geom_bar(stat="identity") +
-       labs(x="Baby name", y="Number of babies", fill="Sex") +
-       theme_bw(17) +
-       theme(axis.text.x = element_text(angle=60, hjust=1))
+     makeHistogram(input$year)
+   })
+   
+   output$histLeast <- renderPlot({
+     makeHistogram(input$year, topNames=FALSE)
    })
    
    output$density <- renderPlot({
