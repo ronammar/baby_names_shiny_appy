@@ -26,7 +26,7 @@ ui <- fluidPage(
      sidebarPanel(
        textInput("names",
                  "Lookup names (comma separated):",
-                 value="Ron, Daniel, Helen, Michal")
+                 value="John, Paul, Ringo, Angelina, Julia, Jenny")
      ),
      
      mainPanel(
