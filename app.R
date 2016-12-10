@@ -38,9 +38,9 @@ ui <- fluidPage(
    
    sidebarLayout(
      sidebarPanel(
-       textInput("name",
+       textInput("names",
                  "Lookup name",
-                 value="Ron")
+                 value="Ron, Daniel, Helen, Michal")
      ),
      
      mainPanel(
@@ -73,7 +73,17 @@ server <- function(input, output) {
    })
    
    output$density <- renderPlot({
-     ggplot(mtcars, aes(x=mpg)) + geom_density()
+     # Density plot of specific name popularity over the years
+     specificNames <- unlist(str_split(str_to_lower(input$names), ","))
+     # Trim any whitespace between names
+     specificNames <- str_trim(specificNames)
+     d <- filter(babyNames, name %in% specificNames)
+     
+     ggplot(d, aes(x=year, y=count, color=name)) +
+       facet_wrap(~ sex) +
+       geom_line() + 
+       theme_bw()
+       
    })
 }
 
